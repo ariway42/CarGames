@@ -4,8 +4,9 @@ const scoreDisplay = document.getElementById("score");
 const gameOverScreen = document.getElementById("game-over");
 const finalScoreText = document.getElementById("final-score");
 const newGameBtn = document.getElementById("new-game-btn");
-const startGameBtn = document.createElement("button"); // buat tombol start game
 
+// Buat tombol Start Game (hanya muncul di awal)
+const startGameBtn = document.createElement("button");
 startGameBtn.id = "start-game-btn";
 startGameBtn.textContent = "Start Game";
 startGameBtn.style.position = "fixed";
@@ -25,12 +26,15 @@ let score = 0;
 let spawnInterval;
 let isGameOver = false;
 
-const laneCount = 5;
+const laneCount = 9;
 let playerPositionX = 2;
 let playerPositionY = 0;
 
 let activeEnemies = [];
 let activeDecorations = [];
+
+// FLAG untuk mencegah double move saat tekan dan tahan key
+let keyPressed = false;
 
 function getLaneLeftPercent(laneIndex) {
     return `calc(${(100 / laneCount) * laneIndex}% + 3%)`;
@@ -38,30 +42,41 @@ function getLaneLeftPercent(laneIndex) {
 
 function getLaneBottomPercent(laneIndex) {
     const baseBottomPx = 5;
-    const stepPercent = 14;
+    const stepPercent = 4;
     return `${baseBottomPx + playerPositionY * stepPercent}%`;
 }
 
 document.addEventListener("keydown", (e) => {
-    if (isGameOver) return;
+    if (isGameOver || keyPressed) return;
 
-    switch (e.key) {
-        case "ArrowLeft":
-            if (playerPositionX > 0) playerPositionX--;
-            break;
-        case "ArrowRight":
-            if (playerPositionX < laneCount - 1) playerPositionX++;
-            break;
-        case "ArrowUp":
-            if (playerPositionY < laneCount - 1) playerPositionY++;
-            break;
-        case "ArrowDown":
-            if (playerPositionY > 0) playerPositionY--;
-            break;
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+        keyPressed = true;
+
+        switch (e.key) {
+            case "ArrowLeft":
+                if (playerPositionX > 0) playerPositionX--;
+                break;
+            case "ArrowRight":
+                if (playerPositionX < laneCount - 1) playerPositionX++;
+                break;
+            case "ArrowUp":
+                if (playerPositionY < laneCount - 1) playerPositionY++;
+                break;
+            case "ArrowDown":
+                if (playerPositionY > 0) playerPositionY--;
+                break;
+        }
+
+        player.style.left = getLaneLeftPercent(playerPositionX);
+        player.style.bottom = getLaneBottomPercent(playerPositionY);
     }
+});
 
-    player.style.left = getLaneLeftPercent(playerPositionX);
-    player.style.bottom = getLaneBottomPercent(playerPositionY);
+// Reset flag saat tombol dilepas supaya bisa deteksi tekan berikutnya
+document.addEventListener("keyup", (e) => {
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+        keyPressed = false;
+    }
 });
 
 document.querySelectorAll("#controller .arrow").forEach(btn => {
@@ -262,11 +277,11 @@ function endGame() {
     finalScoreText.innerText = `Final Score: ${score}`;
     gameOverScreen.classList.remove("hidden");
     newGameBtn.classList.remove("hidden");
-    startGameBtn.style.display = "none";  // sembunyikan start game kalau sudah game over
+    startGameBtn.style.display = "none";  // sembunyikan tombol start game kalau sudah game over
     bgMusic.pause();
 }
 
-// Event tombol Start Game (muncul hanya di awal)
+// Event tombol Start Game (hanya muncul di awal)
 startGameBtn.addEventListener("click", () => {
     startGameBtn.style.display = "none";
     newGameBtn.classList.add("hidden");
