@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tap Tap Car Game</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="game">
+        <div id="player"></div>
+        <div id="score">Score: 0</div>
+    </div>
+
+    <div id="game-over" class="hidden">
+        <div id="game-over-content">
+            <h2>💥 Game Over</h2>
+            <p id="final-score"></p>
+            <button id="new-game-btn">New Game</button>
+        </div>
+    </div>
+
+    <div id="controller">
+        <div class="arrow up" data-dir="up"></div>
+        <div class="arrow down" data-dir="down"></div>
+        <div class="arrow left" data-dir="left"></div>
+        <div class="arrow right" data-dir="right"></div>
+    </div>
+    <audio id="background-music" src="img/backsound.mp3" loop></audio>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

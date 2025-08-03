@@ -1,0 +1,186 @@
+﻿* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #1e1e1e;
+    font-family: sans-serif;
+}
+
+#game {
+    width: 90vw;
+    max-width: 500px;
+    height: 80vh;
+    background: #111;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #fff;
+    border-radius: 12px;
+    background: repeating-linear-gradient( to bottom, #2e2e2e 0px, #2e2e2e 30px, #3a3a3a 30px, #3a3a3a 60px ), linear-gradient(to bottom, #111, #111);
+    background-size: 100% 60px;
+    animation: roadMove 1s linear infinite;
+}
+
+#score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 1.2rem;
+}
+
+#player {
+    width: 14%;
+    aspect-ratio: 1/2;
+    background-image: url('img/PLAYER.png');
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    bottom: 10px;
+    left: 43%;
+    transition: left 0.1s;
+}
+
+.enemy {
+    width: 14%;
+    aspect-ratio: 1/2;
+    background-image: url('img/ENEMY.png');
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    top: -100px; /* mulai dari atas layar */
+    transition: top 0.3s ease-out;
+}
+
+#game-over {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 12px;
+}
+
+    #game-over.hidden {
+        display: none;
+    }
+
+#game-over-content {
+    text-align: center;
+}
+
+#new-game-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    #new-game-btn:hover {
+        background: #ddd;
+    }
+
+
+.decoration {
+    position: absolute;
+    width: 10%; /* atau sesuaikan */
+    aspect-ratio: 1/1;
+    background-size: cover;
+    background-position: center;
+    top: -100px; /* mulai dari luar layar */
+    z-index: 1; /* biar di belakang player/enemy */
+    pointer-events: none; /* biar gak ganggu klik/touch */
+    opacity: 0.7; /* biar gak terlalu terang */
+}
+
+.ethos-img {
+    z-index: 5;
+    pointer-events: none;
+}
+
+#controller {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+    height: 120px;
+    z-index: 1000;
+}
+
+.arrow {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    position: absolute;
+    border-radius: 6px;
+    touch-action: none;
+}
+
+    .arrow.up {
+        top: 0;
+        left: 40px;
+    }
+
+    .arrow.down {
+        bottom: 0;
+        left: 40px;
+    }
+
+    .arrow.left {
+        top: 40px;
+        left: 0;
+    }
+
+    .arrow.right {
+        top: 40px;
+        right: 0;
+    }
+
+@media (min-width: 768px) {
+    #controller {
+        display: none;
+    }
+}
+
+
+@keyframes roadMove {
+    0% {
+        background-position-y: 0;
+    }
+
+    100% {
+        background-position-y: 60px;
+    }
+}
+
+
+
+@media (min-width: 768px) {
+    #player,
+    .enemy {
+        width: 11%;
+    }
+
+    #player {
+        left: 44.5%;
+    }
+}
