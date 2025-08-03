@@ -26,7 +26,7 @@ let score = 0;
 let spawnInterval;
 let isGameOver = false;
 
-const laneCount = 9;
+const laneCount = 7;
 let playerPositionX = 2;
 let playerPositionY = 0;
 
@@ -42,7 +42,7 @@ function getLaneLeftPercent(laneIndex) {
 
 function getLaneBottomPercent(laneIndex) {
     const baseBottomPx = 5;
-    const stepPercent = 4;
+    const stepPercent = 5;
     return `${baseBottomPx + playerPositionY * stepPercent}%`;
 }
 
