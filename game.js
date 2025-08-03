@@ -4,7 +4,19 @@ const scoreDisplay = document.getElementById("score");
 const gameOverScreen = document.getElementById("game-over");
 const finalScoreText = document.getElementById("final-score");
 const newGameBtn = document.getElementById("new-game-btn");
-// Audio
+const startGameBtn = document.createElement("button"); // buat tombol start game
+
+startGameBtn.id = "start-game-btn";
+startGameBtn.textContent = "Start Game";
+startGameBtn.style.position = "fixed";
+startGameBtn.style.top = "50%";
+startGameBtn.style.left = "50%";
+startGameBtn.style.transform = "translate(-50%, -50%)";
+startGameBtn.style.padding = "1rem 2rem";
+startGameBtn.style.fontSize = "1.5rem";
+startGameBtn.style.cursor = "pointer";
+document.body.appendChild(startGameBtn);
+
 const bgMusic = new Audio("img/backsound.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.5;
@@ -14,8 +26,8 @@ let spawnInterval;
 let isGameOver = false;
 
 const laneCount = 5;
-let playerPositionX = 2;  // Horizontal posisi jalur (0-4)
-let playerPositionY = 0;  // Vertikal posisi, 0 = paling bawah, 4 = paling atas
+let playerPositionX = 2;
+let playerPositionY = 0;
 
 let activeEnemies = [];
 let activeDecorations = [];
@@ -229,14 +241,12 @@ function startGame() {
         console.warn("Audio autoplay mungkin diblokir oleh browser.");
     });
 
-    // Spawn musuh dan decoration langsung tanpa delay saat mulai
     const enemiesPerWave = Math.min(1 + Math.floor(score / 10), 3);
     for (let i = 0; i < enemiesPerWave; i++) {
         setTimeout(spawnEnemy, i * 250);
     }
     setTimeout(spawnEthosDecoration, Math.floor(Math.random() * 1200));
 
-    // Lanjut spawn terus setiap 1200ms
     spawnInterval = setInterval(() => {
         const enemiesPerWave = Math.min(1 + Math.floor(score / 10), 3);
         for (let i = 0; i < enemiesPerWave; i++) {
@@ -246,24 +256,33 @@ function startGame() {
     }, 1200);
 }
 
-
 function endGame() {
     isGameOver = true;
     clearInterval(spawnInterval);
     finalScoreText.innerText = `Final Score: ${score}`;
     gameOverScreen.classList.remove("hidden");
     newGameBtn.classList.remove("hidden");
+    startGameBtn.style.display = "none";  // sembunyikan start game kalau sudah game over
     bgMusic.pause();
 }
 
+// Event tombol Start Game (muncul hanya di awal)
+startGameBtn.addEventListener("click", () => {
+    startGameBtn.style.display = "none";
+    newGameBtn.classList.add("hidden");
+    startGame();
+});
+
+// Event tombol New Game (muncul saat game over)
 newGameBtn.addEventListener("click", () => {
     newGameBtn.classList.add("hidden");
     startGame();
 });
 
-window.onload = startGame;
+// Jangan panggil startGame otomatis saat page load
+// window.onload = startGame;
 
-// Pastikan backsound bisa dimulai setelah interaksi pertama
+// Backsound mulai setelah interaksi user
 window.addEventListener("click", () => {
     if (!isGameOver && bgMusic.paused) {
         bgMusic.play().catch(() => {
@@ -272,7 +291,6 @@ window.addEventListener("click", () => {
     }
 }, { once: true });
 
-// Tambahan: deteksi key juga untuk mulai musik
 window.addEventListener("keydown", () => {
     if (!isGameOver && bgMusic.paused) {
         bgMusic.play().catch(() => {
