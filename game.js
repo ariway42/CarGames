@@ -4,7 +4,7 @@ const scoreDisplay = document.getElementById("score");
 const gameOverScreen = document.getElementById("game-over");
 const finalScoreText = document.getElementById("final-score");
 const newGameBtn = document.getElementById("new-game-btn");
-// Tambahkan di bagian atas (bareng deklarasi lain)
+// Audio
 const bgMusic = new Audio("img/backsound.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.5;
@@ -24,15 +24,9 @@ function getLaneLeftPercent(laneIndex) {
     return `calc(${(100 / laneCount) * laneIndex}% + 3%)`;
 }
 
-
 function getLaneBottomPercent(laneIndex) {
-    // Buat vertikal, misal jalur ada 5
-    // 0 = paling bawah 10px, 4 = paling atas (contoh 80vh - tinggi player)
-    // Kita bikin space vertikal 16% tiap level (bisa disesuaikan)
-    const baseBottomPx = 5; // bottom awal player
-    const stepPercent = 14; // jarak vertikal antar jalur, bisa tweak ini
-
-    // Jadi bottom = base + step * levelY, contohnya:
+    const baseBottomPx = 5;
+    const stepPercent = 14;
     return `${baseBottomPx + playerPositionY * stepPercent}%`;
 }
 
@@ -57,6 +51,7 @@ document.addEventListener("keydown", (e) => {
     player.style.left = getLaneLeftPercent(playerPositionX);
     player.style.bottom = getLaneBottomPercent(playerPositionY);
 });
+
 document.querySelectorAll("#controller .arrow").forEach(btn => {
     btn.addEventListener("touchstart", () => handleControl(btn.dataset.dir));
     btn.addEventListener("mousedown", () => handleControl(btn.dataset.dir));
@@ -83,7 +78,6 @@ function handleControl(direction) {
     player.style.left = getLaneLeftPercent(playerPositionX);
     player.style.bottom = getLaneBottomPercent(playerPositionY);
 }
-
 
 function checkCollision(enemy) {
     const playerRect = player.getBoundingClientRect();
@@ -121,41 +115,41 @@ function spawnEnemy() {
 
     enemy.style.left = getLaneLeftPercent(lane);
     enemy.dataset.lane = lane;
-    enemy.style.top = "-100px";
-
-    // Posisi vertikal enemy kita tetap dari atas, gak berubah
+    enemy.style.transform = "translateY(-100px)";
 
     game.appendChild(enemy);
     activeEnemies.push(enemy);
 
-    let top = -100;
+    let posY = -100;
     const fallSpeed = Math.min(3 + score * 0.1, 10);
 
-    const move = setInterval(() => {
+    function move() {
         if (isGameOver) {
-            clearInterval(move);
             enemy.remove();
             activeEnemies = activeEnemies.filter(e => e !== enemy);
             return;
         }
 
-        top += fallSpeed;
-        enemy.style.top = top + "px";
+        posY += fallSpeed;
+        enemy.style.transform = `translateY(${posY}px)`;
 
         if (checkCollision(enemy)) {
-            clearInterval(move);
             endGame();
             return;
         }
 
-        if (top > game.offsetHeight) {
-            clearInterval(move);
+        if (posY > game.offsetHeight) {
             enemy.remove();
             activeEnemies = activeEnemies.filter(e => e !== enemy);
             score++;
             scoreDisplay.innerText = "Score: " + score;
+            return;
         }
-    }, 20);
+
+        requestAnimationFrame(move);
+    }
+
+    requestAnimationFrame(move);
 }
 
 function spawnEthosDecoration() {
@@ -168,24 +162,23 @@ function spawnEthosDecoration() {
     const lane = Math.floor(Math.random() * laneCount);
     ethos.style.left = getLaneLeftPercent(lane);
     ethos.dataset.lane = lane;
-    ethos.style.top = "-100px";
+    ethos.style.transform = "translateY(-100px)";
 
     game.appendChild(ethos);
     activeDecorations.push(ethos);
 
-    let top = -100;
+    let posY = -100;
     const fallSpeed = 2;
 
-    const move = setInterval(() => {
+    function move() {
         if (isGameOver) {
-            clearInterval(move);
             ethos.remove();
             activeDecorations = activeDecorations.filter(e => e !== ethos);
             return;
         }
 
-        top += fallSpeed;
-        ethos.style.top = top + "px";
+        posY += fallSpeed;
+        ethos.style.transform = `translateY(${posY}px)`;
 
         const playerRect = player.getBoundingClientRect();
         const ethosRect = ethos.getBoundingClientRect();
@@ -197,7 +190,6 @@ function spawnEthosDecoration() {
             playerRect.bottom > ethosRect.top;
 
         if (isOverlap) {
-            clearInterval(move);
             ethos.remove();
             activeDecorations = activeDecorations.filter(e => e !== ethos);
 
@@ -206,19 +198,23 @@ function spawnEthosDecoration() {
             return;
         }
 
-        if (top > game.offsetHeight) {
-            clearInterval(move);
+        if (posY > game.offsetHeight) {
             ethos.remove();
             activeDecorations = activeDecorations.filter(e => e !== ethos);
+            return;
         }
-    }, 20);
+
+        requestAnimationFrame(move);
+    }
+
+    requestAnimationFrame(move);
 }
 
 function startGame() {
     score = 0;
     isGameOver = false;
     playerPositionX = 2;
-    playerPositionY = 0; // start paling bawah
+    playerPositionY = 0;
     scoreDisplay.innerText = "Score: 0";
     player.style.left = getLaneLeftPercent(playerPositionX);
     player.style.bottom = getLaneBottomPercent(playerPositionY);
@@ -227,7 +223,7 @@ function startGame() {
     document.querySelectorAll(".decoration").forEach(e => e.remove());
     activeEnemies = [];
     activeDecorations = [];
-    // Tambahkan ini di dalam fungsi `startGame()` (jangan ubah isi lainnya)
+
     bgMusic.currentTime = 0;
     bgMusic.play().catch(() => {
         console.warn("Audio autoplay mungkin diblokir oleh browser.");
@@ -255,6 +251,7 @@ newGameBtn.addEventListener("click", () => {
     newGameBtn.classList.add("hidden");
     startGame();
 });
+
 window.onload = startGame;
 
 // Pastikan backsound bisa dimulai setelah interaksi pertama
@@ -266,7 +263,7 @@ window.addEventListener("click", () => {
     }
 }, { once: true });
 
-// Tambahan: deteksi key juga
+// Tambahan: deteksi key juga untuk mulai musik
 window.addEventListener("keydown", () => {
     if (!isGameOver && bgMusic.paused) {
         bgMusic.play().catch(() => {
