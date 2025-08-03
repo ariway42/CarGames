@@ -229,6 +229,14 @@ function startGame() {
         console.warn("Audio autoplay mungkin diblokir oleh browser.");
     });
 
+    // Spawn musuh dan decoration langsung tanpa delay saat mulai
+    const enemiesPerWave = Math.min(1 + Math.floor(score / 10), 3);
+    for (let i = 0; i < enemiesPerWave; i++) {
+        setTimeout(spawnEnemy, i * 250);
+    }
+    setTimeout(spawnEthosDecoration, Math.floor(Math.random() * 1200));
+
+    // Lanjut spawn terus setiap 1200ms
     spawnInterval = setInterval(() => {
         const enemiesPerWave = Math.min(1 + Math.floor(score / 10), 3);
         for (let i = 0; i < enemiesPerWave; i++) {
@@ -237,6 +245,7 @@ function startGame() {
         setTimeout(spawnEthosDecoration, Math.floor(Math.random() * 1200));
     }, 1200);
 }
+
 
 function endGame() {
     isGameOver = true;
