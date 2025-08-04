@@ -9,9 +9,17 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #1e1e1e;
+    background-color: #e0dcdc;
     font-family: sans-serif;
+    background-image: url('img/ethos.png'), url('img/ethos.png');
+    background-repeat: no-repeat, no-repeat;
+    /* posisi kanan-kiri agak digeser */
+    background-position: left 100px center, right 100px center;
+    /* kecilin ukuran gambar */
+    background-size: 300px auto;
 }
+
+
 
 #game {
     width: 90vw;
@@ -20,7 +28,7 @@ body {
     background: #111;
     position: relative;
     overflow: hidden;
-    border: 3px solid #fff;
+    border: 3px solid #2e2e2e;
     border-radius: 12px;
     background: repeating-linear-gradient( to bottom, #2e2e2e 0px, #2e2e2e 30px, #3a3a3a 30px, #3a3a3a 60px ), linear-gradient(to bottom, #111, #111);
     background-size: 100% 60px;
@@ -38,7 +46,7 @@ body {
 #player {
     width: 14%;
     aspect-ratio: 1/2;
-    background-image: url('img/PLAYER.png');
+    background-image: url('img/players.png');
     background-size: cover;
     background-position: center;
     position: absolute;
@@ -50,13 +58,14 @@ body {
 .enemy {
     width: 14%;
     aspect-ratio: 1/2;
-    background-image: url('img/ENEMY.png');
     background-size: cover;
     background-position: center;
     position: absolute;
-    top: -100px; /* mulai dari atas layar */
+    top: -100px;
     transition: top 0.3s ease-out;
 }
+
+
 
 #game-over {
     position: absolute;
@@ -113,6 +122,13 @@ body {
 }
 
 .ethos-img {
+    width: 15%; /* Atur ukuran lebar sesuai keinginan */
+    aspect-ratio: 1/1; /* Biar bentuknya proporsional */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: -100px;
     z-index: 5;
     pointer-events: none;
 }

@@ -133,6 +133,18 @@ function spawnEnemy() {
     const enemy = document.createElement("div");
     enemy.classList.add("enemy");
 
+    // Array gambar enemy
+    const enemyImages = [
+        "img/ENEMY.png",
+        "img/car2.png",
+         "img/car3.png",
+          "img/car4.png"
+    ];
+
+    // Pilih acak
+    const randomImg = enemyImages[Math.floor(Math.random() * enemyImages.length)];
+    enemy.style.backgroundImage = `url('${randomImg}')`;
+
     let lane;
     let retry = 0;
     do {
@@ -148,7 +160,9 @@ function spawnEnemy() {
     activeEnemies.push(enemy);
 
     let posY = -100;
-    const fallSpeed = Math.min(3 + score * 0.1, 10);
+    const elapsedTime = (Date.now() - startTime) / 1000; // detik
+    const fallSpeed = Math.min(3 + Math.floor(elapsedTime / 20), 15);
+
 
     function move() {
         if (isGameOver) {
@@ -178,6 +192,7 @@ function spawnEnemy() {
 
     requestAnimationFrame(move);
 }
+
 
 function spawnEthosDecoration() {
     if (activeDecorations.length >= 3) return;
@@ -242,6 +257,7 @@ function startGame() {
     isGameOver = false;
     playerPositionX = 2;
     playerPositionY = 0;
+    startTime = Date.now();
     scoreDisplay.innerText = "Score: 0";
     player.style.left = getLaneLeftPercent(playerPositionX);
     player.style.bottom = getLaneBottomPercent(playerPositionY);
@@ -274,12 +290,43 @@ function startGame() {
 function endGame() {
     isGameOver = true;
     clearInterval(spawnInterval);
-    finalScoreText.innerText = `Final Score: ${score}`;
-    gameOverScreen.classList.remove("hidden");
-    newGameBtn.classList.remove("hidden");
-    startGameBtn.style.display = "none";  // sembunyikan tombol start game kalau sudah game over
+
+    const gameOverTitle = document.querySelector("#game-over-content h2");
+    const finalScoreText = document.getElementById("final-score");
+    const congratsMessage = document.getElementById("congrats-message");
+
+    if (score >= 100) {
+        // Hide "Game Over"
+        if (gameOverTitle) gameOverTitle.style.display = "none";
+
+        // Show congratulations
+        if (congratsMessage) congratsMessage.style.display = "block";
+
+        // Generate kode acak 8 karakter (huruf & angka)
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let randomCode = '';
+        for (let i = 0; i < 8; i++) {
+            randomCode += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+
+        finalScoreText.innerText = `YOU GET SCORE: ${score} \nHERE YOUR CODE TO GET SOME $AIR \n ${randomCode}`;
+
+    } else {
+        // Show regular Game Over
+        if (gameOverTitle) gameOverTitle.style.display = "block";
+        if (congratsMessage) congratsMessage.style.display = "none";
+
+        finalScoreText.innerText = `Final Score: ${score}`;
+    }
+
+    document.getElementById("game-over").classList.remove("hidden");
+    document.getElementById("new-game-btn").classList.remove("hidden");
+    document.getElementById("start-game-btn").style.display = "none";
+
     bgMusic.pause();
 }
+
+
 
 // Event tombol Start Game (hanya muncul di awal)
 startGameBtn.addEventListener("click", () => {
