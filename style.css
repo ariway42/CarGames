@@ -11,7 +11,7 @@ body {
     height: 100vh;
     background-color: #e0dcdc;
     font-family: sans-serif;
-    background-image: url('img/ethos.png'), url('img/ethos.png');
+    background-image: url('img/ETHOS.png'), url('img/ETHOS.png');
     background-repeat: no-repeat, no-repeat;
     /* posisi kanan-kiri agak digeser */
     background-position: left 100px center, right 100px center;
